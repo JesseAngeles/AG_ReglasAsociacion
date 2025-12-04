@@ -61,4 +61,4 @@ df = df.rename(columns={
     "glucose_cat": "blood_glucose_level",
 })
 
-df.to_csv("./data/diabetes_clean_dataset.csv")
+df.to_csv("./data/diabetes_clean_dataset.csv", index=False)
