@@ -37,6 +37,21 @@ ranges_glucose = [
     ("critico", 200, 1000)
 ]
 
+race_cols = [
+    "race:AfricanAmerican",
+    "race:Asian",
+    "race:Caucasian",
+    "race:Hispanic",
+    "race:Other"
+]
+
+# Convertir one-hot a categoría única
+df["race"] = df[race_cols].idxmax(axis=1)
+df["race"] = df["race"].str.replace("race:", "", regex=False)
+
+# Eliminar las columnas one-hot
+df = df.drop(columns=race_cols)
+
 # Función de discretización genérica
 def discretize(df, col, ranges, new_name):
     df[new_name] = None
