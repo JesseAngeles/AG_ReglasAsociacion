@@ -6,6 +6,22 @@ df = pd.read_csv("./data/diabetes_dataset.csv")
 numeric_cols = ["age", "bmi", "hbA1c_level", "blood_glucose_level"]
 df[numeric_cols] = df[numeric_cols].apply(pd.to_numeric, errors="coerce")
 
+# ====== NUEVO: Convertir one-hot de raza a una columna única ======
+race_cols = [
+    "race:AfricanAmerican",
+    "race:Asian",
+    "race:Caucasian",
+    "race:Hispanic",
+    "race:Other"
+]
+
+# Obtener la raza correspondiente al 1 en cada fila
+df["race"] = df[race_cols].idxmax(axis=1).str.replace("race:", "")
+
+# Eliminar las columnas one-hot
+df = df.drop(columns=race_cols)
+# ================================================================
+
 # Filtrar solo 2019
 df = df[df["year"] == 2019].drop(columns=["year"])
 
