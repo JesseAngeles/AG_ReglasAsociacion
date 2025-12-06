@@ -1,4 +1,5 @@
 import pandas as pd
+import json
 
 df = pd.read_csv("./data/diabetes_dataset.csv")
 
@@ -11,7 +12,7 @@ df = df[df["year"] == 2019].drop(columns=["year"])
 
 # RANGOS
 ranges_age = [
-    ("niño", 0, 9),
+    ("ninio", 0, 9),
     ("adolescente", 10, 19),
     ("joven", 20, 59),
     ("adulto mayor", 60, 100),
@@ -76,4 +77,18 @@ df = df.rename(columns={
     "glucose_cat": "blood_glucose_level",
 })
 
-df.to_csv("./data/diabetes_clean_dataset.csv")
+df = df.drop(df.columns[0], axis=1)
+
+mappings = {}
+
+for column in df.columns:
+    unique_vals = df[column].unique()
+    mapping = {str(val): int(i) + 1 for i, val in enumerate(unique_vals)}
+    
+    mappings[column] = mapping
+    df[column] = df[column].map(lambda x: mapping[str(x)])
+
+df.to_csv("./data/dataset.csv", index=False)
+
+with open("./data/dataset_mappings.json", "w") as f:
+    json.dump(mappings, f, indent=4)
