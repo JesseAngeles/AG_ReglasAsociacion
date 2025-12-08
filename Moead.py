@@ -83,12 +83,12 @@ def graficar_vectores(vectores, M, H):
             plt.plot([-0.02, 0], [t, t], color="deepskyblue", linewidth=2)
 
             plt.text(t, -0.05,
-                     f"$\\frac{{{int(t*H)}}}{{H={H}}}$",
-                     ha='center', va='top', fontsize=8, color="deepskyblue")
+                    f"$\\frac{{{int(t*H)}}}{{H={H}}}$",
+                    ha='center', va='top', fontsize=8, color="deepskyblue")
 
             plt.text(-0.05, t,
-                     f"$\\frac{{{int(t*H)}}}{{H={H}}}$",
-                     ha='right', va='center', fontsize=8, color="deepskyblue")
+                    f"$\\frac{{{int(t*H)}}}{{H={H}}}$",
+                    ha='right', va='center', fontsize=8, color="deepskyblue")
 
         # ---- Flechas + puntos + etiquetas ----
         for i, v in enumerate(vectores):
@@ -208,26 +208,7 @@ def generar_individuo(dominios):
     azul = [0] * n
     verde = [0] * n
         
-    # Asegurar al menos un antecedente y un consecuente
-    idx_ante = random.randint(0, n-1)
-    idx_cons = random.randint(0, n-1)
-        
-    while idx_cons == idx_ante:
-        idx_cons = random.randint(0, n-1)
     
-    azul[idx_ante] = 1  # antecedente
-    azul[idx_cons] = 2  # consecuente
-        
-    # Asignar valores discretizados (restar 1 porque randint incluye extremos)
-    verde[idx_ante] = random.randint(1, dominios[variables[idx_ante]] - 1)
-    verde[idx_cons] = random.randint(1, dominios[variables[idx_cons]] - 1)
-        
-    # Para el resto, activar aleatoriamente con probabilidad 0.3
-    for i in range(n):
-        if i not in [idx_ante, idx_cons]:
-            if random.random() < 0.3:  # 30% de probabilidad
-                azul[i] = random.choice([1, 2])
-                verde[i] = random.randint(1, dominios[variables[i]] - 1)
     return azul, verde
 
 # Generar la población
@@ -235,16 +216,31 @@ def generarPoblacion(numeroIndividuos):
     
     poblacion = []
     
-    dominios = {
-    "sexo": 2,
-    "edad": 4,
-    "bmi": 4,
-    "hbA1c": 3,
-    "blood_glucose_level": 4,
-    "hipertension": 2,
-    "tipo_diab": 2   # depende del dataset, pero este tiene solo 2
+    df = pd.read_csv("./data/diabetes_dataset.csv")
     
+    def get_domains(df):
+        domains = {}
+        for col in df.columns:
+            domains[col] = sorted(df[col].dropna().unique().tolist())
+        return domains
+
+    dominios = get_domains(df)
+    print(dominios)
+    """
+    dominios = {
+    "gender": ["Male", "Female"],
+    "location": ["Alabama", ],
+    "hypertension",
+    "heart_disease",
+    "smoking_history",
+    "diabetes",
+    "race",
+    "age",
+    "bmi",
+    "hbA1c_level",
+    "blood_glucose_level"
     }
+    """
     
     for i in range(numeroIndividuos):
         poblacion.append(generar_individuo(dominios))
