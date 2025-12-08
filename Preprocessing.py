@@ -1,4 +1,5 @@
 import pandas as pd
+import json
 
 df = pd.read_csv("./data/diabetes_dataset.csv")
 
@@ -27,7 +28,7 @@ df = df[df["year"] == 2019].drop(columns=["year"])
 
 # RANGOS
 ranges_age = [
-    ("niño", 0, 9),
+    ("ninio", 0, 9),
     ("adolescente", 10, 19),
     ("joven", 20, 59),
     ("adulto mayor", 60, 100),
@@ -52,6 +53,21 @@ ranges_glucose = [
     ("elevado", 160, 199),
     ("critico", 200, 1000)
 ]
+
+race_cols = [
+    "race:AfricanAmerican",
+    "race:Asian",
+    "race:Caucasian",
+    "race:Hispanic",
+    "race:Other"
+]
+
+# Convertir one-hot a categoría única
+df["race"] = df[race_cols].idxmax(axis=1)
+df["race"] = df["race"].str.replace("race:", "", regex=False)
+
+# Eliminar las columnas one-hot
+df = df.drop(columns=race_cols)
 
 # Función de discretización genérica
 def discretize(df, col, ranges, new_name):
